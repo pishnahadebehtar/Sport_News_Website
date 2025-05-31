@@ -27,17 +27,29 @@ export async function GET() {
       databases.listDocuments(
         process.env.APPWRITE_DATABASE_ID!,
         process.env.APPWRITE_COLLECTION_ID!,
-        [Query.select(["category"]), Query.limit(100)]
+        [
+          Query.select(["category"]),
+          Query.orderDesc("$createdAt"), // Sort by creation time, newest first
+          Query.limit(100),
+        ]
       ),
       databases.listDocuments(
         process.env.APPWRITE_DATABASE_ID!,
         process.env.APPWRITE_COLLECTION_ID!,
-        [Query.select(["source"]), Query.limit(100)]
+        [
+          Query.select(["source"]),
+          Query.orderDesc("$createdAt"), // Sort by creation time, newest first
+          Query.limit(100),
+        ]
       ),
       databases.listDocuments(
         process.env.APPWRITE_DATABASE_ID!,
         process.env.APPWRITE_COLLECTION_ID!,
-        [Query.select(["tags"]), Query.limit(100)]
+        [
+          Query.select(["tags"]),
+          Query.orderDesc("$createdAt"), // Sort by creation time, newest first
+          Query.limit(100),
+        ]
       ),
     ]);
 

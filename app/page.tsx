@@ -25,6 +25,7 @@ import {
 import HomePage from "@/components/HomePage";
 import hodhod from "../public/images/hodhod.png";
 import Footer from "@/components/Footer";
+
 // Custom dark theme
 const theme = createTheme({
   palette: {
