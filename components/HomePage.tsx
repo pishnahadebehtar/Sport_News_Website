@@ -23,16 +23,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { Ubuntu } from "next/font/google";
-// Import league logos
 import cl from "../public/images/cl.png";
 import ec from "../public/images/ec.png";
 import pl from "../public/images/pl.jpg";
-
+// Font setup
 const ubuntu = Ubuntu({
-  weight: ["400", "700"], // Specify desired weights (e.g., regular and bold)
-  subsets: ["latin"], // Specify subsets (latin is usually sufficient)
-  display: "swap", // Optimize font loading to avoid layout shift
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
 });
+
 // Random vibrant border color generator
 const getRandomVibrantColor = () => {
   const colors = [
@@ -50,7 +50,7 @@ const getRandomVibrantColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-// Styled card with random border
+// Styled card with responsive width and padding
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   borderRadius: "16px",
@@ -59,28 +59,30 @@ const StyledCard = styled(Card)(({ theme }) => ({
   width: "100%",
   minHeight: "150px",
   padding: theme.spacing(2),
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(1), // Reduced padding on mobile
+  },
 }));
 
-// Styled card content to ensure full width
+// Styled card content
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(2),
   "&:last-child": { paddingBottom: theme.spacing(2) },
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(1), // Reduced padding on mobile
+  },
 }));
 
-// Styled component for story circle
+// Responsive StoryCircle with clamped sizing
 const StoryCircle = styled(Box)<{ selected: boolean }>`
-  width: 10vw;
-  height: 10vw;
-  min-width: 80px;
-  min-height: 80px;
-  max-width: 120px;
-  max-height: 120px;
+  width: clamp(60px, 12vw, 90px); // Clamped size for mobile
+  height: clamp(60px, 12vw, 90px);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justifycontent: center;
+  justify-content: center; // Fixed typo: justifycontent -> justify-content
   padding: 4px;
   background: #fff;
   background-clip: padding-box;
@@ -109,37 +111,48 @@ const StoryCircle = styled(Box)<{ selected: boolean }>`
   }
 `;
 
-// News ticker band
-const NewsTicker = styled(Box)`
-  background: #e53935;
-  color: #fff;
-  padding: 8px 16px;
-  overflow: hidden;
-  white-space: nowrap;
-  font-weight: bold;
-  font-size: 1rem;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  .ticker-content {
-    display: inline-block;
-    animation: ticker 65s linear infinite;
-  }
-  &:hover .ticker-content {
-    animation-play-state: paused;
-  }
-  @keyframes ticker {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-`;
+// Responsive NewsTicker
+const NewsTicker = styled(Box)(({ theme }) => ({
+  background: "#e53935",
+  color: "#fff",
+  padding: theme.spacing(1, 2),
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  fontWeight: "bold",
+  fontSize: "1rem",
+  marginBottom: theme.spacing(3),
+  borderRadius: "8px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  width: "100%",
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "0.9rem", // Slightly smaller font for mobile
+    padding: theme.spacing(0.5, 1),
+  },
+  "& .ticker-content": {
+    display: "inline-block",
+    animation: "ticker 65s linear infinite",
+    [theme.breakpoints.down("sm")]: {
+      animation: "ticker 45s linear infinite", // Faster ticker on mobile
+    },
+  },
+  "&:hover .ticker-content": {
+    animationPlayState: "paused",
+  },
+  "@keyframes ticker": {
+    "0%": { transform: "translateX(100%)" },
+    "100%": { transform: "translateX(-100%)" },
+  },
+}));
 
-// Interfaces for API responses
+// Responsive Typography with 1.2x text size on mobile
+const ResponsiveTypography = styled(Typography)(({ theme }) => ({
+  fontSize: "inherit",
+  [theme.breakpoints.down("sm")]: {
+    fontSize: `calc(1rem * 1.2)`, // 1.2x text size on mobile
+  },
+}));
+
+// Interfaces (unchanged)
 interface Match {
   id: number;
   $id: string;
@@ -163,7 +176,7 @@ interface Competition {
   area: { name: string };
 }
 
-// Mock data
+// Mock data (unchanged)
 const mockStandings: Standing[] = Array(10)
   .fill(0)
   .map((_, i) => ({
@@ -191,7 +204,7 @@ const mockMatches: Match[] = Array(10)
     utcDate: "2025-05-26T16:00:00Z",
   }));
 
-// Available competitions
+// Available competitions (unchanged)
 const competitions = [
   { code: "PL", name: "لیگ برتر", logo: pl },
   { code: "CL", name: "لیگ قهرمانان اروپا", logo: cl },
@@ -218,14 +231,12 @@ export default function FootballDashboard() {
       setError(null);
 
       try {
-        // Fetch competition
         const compRes = await axios.get(
           `/api/football/competitions/${selectedCompetition}`
         );
         setCompetition(compRes.data || mockCompetition);
         await delay(1000);
 
-        // Fetch standings
         const standingsRes = await axios.get(
           `/api/football/competitions/${selectedCompetition}/standings`
         );
@@ -234,7 +245,6 @@ export default function FootballDashboard() {
         );
         await delay(1000);
 
-        // Fetch recent matches
         const matchesRes = await axios.get(
           `/api/football/competitions/${selectedCompetition}/matches`
         );
@@ -291,7 +301,7 @@ export default function FootballDashboard() {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -313,10 +323,11 @@ export default function FootballDashboard() {
       {/* League Selection Circles */}
       <Box
         display="flex"
-        justifyContent="space-between"
-        width="100%"
+        justifyContent="space-around"
+        flexWrap="wrap" // Allow wrapping on smaller screens
+        gap={2}
         mb={4}
-        px={2}
+        px={{ xs: 1, sm: 2 }}
       >
         {competitions.map((comp) => (
           <StoryCircle
@@ -328,8 +339,8 @@ export default function FootballDashboard() {
               src={comp.logo}
               alt={`لوگوی ${comp.name}`}
               className="story-image"
-              width={100}
-              height={100}
+              width={90}
+              height={90}
               priority
             />
           </StoryCircle>
@@ -342,9 +353,9 @@ export default function FootballDashboard() {
           {loading ? (
             <Box display="flex" alignItems="center">
               <CircularProgress size={40} />
-              <Typography variant="subtitle1" sx={{ mr: 8 }}>
+              <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
                 در حال بارگذاری
-              </Typography>
+              </ResponsiveTypography>
             </Box>
           ) : (
             competition && (
@@ -356,16 +367,17 @@ export default function FootballDashboard() {
                   justifyContent: "center",
                 }}
               >
-                <Typography
+                <ResponsiveTypography
                   variant="h3"
                   className={ubuntu.className}
                   sx={{
                     margin: 0,
                     textAlign: "center",
+                    fontSize: "3rem",
                   }}
                 >
                   {competition.name}
-                </Typography>
+                </ResponsiveTypography>
               </Box>
             )
           )}
@@ -378,7 +390,9 @@ export default function FootballDashboard() {
         onChange={() => setExpandedStandings(!expandedStandings)}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">جدول رده‌بندی</Typography>
+          <ResponsiveTypography variant="h6">
+            جدول رده‌بندی
+          </ResponsiveTypography>
         </AccordionSummary>
         <AccordionDetails>
           <StyledCard>
@@ -386,31 +400,59 @@ export default function FootballDashboard() {
               {loading ? (
                 <Box display="flex" alignItems="center">
                   <CircularProgress size={40} />
-                  <Typography variant="subtitle1" sx={{ mr: 8 }}>
+                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
                     در حال بارگذاری جدول رده‌بندی
-                  </Typography>
+                  </ResponsiveTypography>
                 </Box>
               ) : (
-                <Table sx={{ width: "100%" }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>موقعیت</TableCell>
-                      <TableCell>تیم</TableCell>
-                      <TableCell>امتیاز</TableCell>
-                      <TableCell>بازی‌های انجام شده</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {standings.slice(0, 10).map((standing) => (
-                      <TableRow key={`standing-${standing.position}`}>
-                        <TableCell>{standing.position}</TableCell>
-                        <TableCell>{standing.team.name}</TableCell>
-                        <TableCell>{standing.points}</TableCell>
-                        <TableCell>{standing.playedGames}</TableCell>
+                <Box sx={{ overflowX: "auto" }}>
+                  <Table sx={{ minWidth: { xs: 300, sm: 600 } }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <ResponsiveTypography>موقعیت</ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>تیم</ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>امتیاز</ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>
+                            بازی‌های انجام شده
+                          </ResponsiveTypography>
+                        </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {standings.slice(0, 10).map((standing) => (
+                        <TableRow key={`standing-${standing.position}`}>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {standing.position}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {standing.team.name}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {standing.points}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {standing.playedGames}
+                            </ResponsiveTypography>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
               )}
             </StyledCardContent>
           </StyledCard>
@@ -423,7 +465,7 @@ export default function FootballDashboard() {
         onChange={() => setExpandedMatches(!expandedMatches)}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">مسابقات اخیر</Typography>
+          <ResponsiveTypography variant="h6">مسابقات اخیر</ResponsiveTypography>
         </AccordionSummary>
         <AccordionDetails>
           <StyledCard>
@@ -431,37 +473,63 @@ export default function FootballDashboard() {
               {loading ? (
                 <Box display="flex" alignItems="center">
                   <CircularProgress size={40} />
-                  <Typography variant="subtitle1" sx={{ mr: 8 }}>
+                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
                     در حال بارگذاری مسابقات اخیر
-                  </Typography>
+                  </ResponsiveTypography>
                 </Box>
               ) : (
-                <Table sx={{ width: "100%" }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>تیم میزبان</TableCell>
-                      <TableCell>تیم میهمان</TableCell>
-                      <TableCell>امتیاز</TableCell>
-                      <TableCell>تاریخ</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {recentMatches.map((match) => (
-                      <TableRow key={`recent-match-${match.$id}`}>
-                        <TableCell>{match.homeTeam.name}</TableCell>
-                        <TableCell>{match.awayTeam.name}</TableCell>
-                        <TableCell>{`${
-                          match.score.fullTime.home ?? "نامشخص"
-                        } - ${
-                          match.score.fullTime.away ?? "نامشخص"
-                        }`}</TableCell>
+                <Box sx={{ overflowX: "auto" }}>
+                  <Table sx={{ minWidth: { xs: 300, sm: 600 } }}>
+                    <TableHead>
+                      <TableRow>
                         <TableCell>
-                          {new Date(match.utcDate).toLocaleString("fa-IR")}
+                          <ResponsiveTypography>
+                            تیم میزبان
+                          </ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>
+                            تیم میهمان
+                          </ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>امتیاز</ResponsiveTypography>
+                        </TableCell>
+                        <TableCell>
+                          <ResponsiveTypography>تاریخ</ResponsiveTypography>
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {recentMatches.map((match) => (
+                        <TableRow key={`recent-match-${match.$id}`}>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {match.homeTeam.name}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {match.awayTeam.name}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {`${match.score.fullTime.home ?? "نامشخص"} - ${
+                                match.score.fullTime.away ?? "نامشخص"
+                              }`}
+                            </ResponsiveTypography>
+                          </TableCell>
+                          <TableCell>
+                            <ResponsiveTypography>
+                              {new Date(match.utcDate).toLocaleString("fa-IR")}
+                            </ResponsiveTypography>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
               )}
             </StyledCardContent>
           </StyledCard>

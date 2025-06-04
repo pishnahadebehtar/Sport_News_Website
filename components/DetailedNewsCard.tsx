@@ -228,7 +228,7 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
         <Typography
           variant="h3"
           sx={{
-            fontSize: "1.25rem",
+            fontSize: { xs: "1.5625rem", sm: "1.25rem" }, // 1.25rem * 1.25 for mobile
             fontWeight: "bold",
             color: "text.primary",
           }}
@@ -236,13 +236,25 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
           {title}
         </Typography>
         <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-          <Typography variant="body2" color="success.main">
+          <Typography
+            variant="body2"
+            color="success.main"
+            sx={{ fontSize: { xs: "1.09375rem", sm: "0.875rem" } }} // 0.875rem * 1.25
+          >
             {category}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "1.09375rem", sm: "0.875rem" } }}
+          >
             • {source}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "1.09375rem", sm: "0.875rem" } }}
+          >
             • {new Date(date).toLocaleDateString("fa-IR")}
           </Typography>
         </Box>
@@ -251,6 +263,7 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
           sx={{
             color: "text.primary",
             mt: 2,
+            fontSize: { xs: "1.25rem", sm: "1rem" }, // 1rem * 1.25
           }}
         >
           {summary}
@@ -279,13 +292,23 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
           >
             <Typography
               variant="body2"
-              sx={{ fontWeight: "bold", color: "text.primary" }}
+              sx={{
+                fontWeight: "bold",
+                color: "text.primary",
+                fontSize: { xs: "1.09375rem", sm: "0.875rem" }, // 0.875rem * 1.25
+              }}
             >
               خواندن توضیحات کامل
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2" sx={{ color: "text.primary" }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.primary",
+                fontSize: { xs: "1.09375rem", sm: "0.875rem" }, // 0.875rem * 1.25
+              }}
+            >
               {expanded ? full_explanation : truncatedExplanation}
             </Typography>
           </AccordionDetails>
@@ -324,17 +347,31 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
         </StyledIconButton>
         {tags.length > 0 && (
           <Box sx={{ mt: 2, display: "flex", flexWrap: "wrap", gap: 1 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mr: 1, fontSize: { xs: "1.09375rem", sm: "0.875rem" } }} // 0.875rem * 1.25
+            >
               برچسب‌ها:
             </Typography>
             {tags.map((tag) => (
-              <Chip key={tag} label={tag} color="secondary" size="small" />
+              <Chip
+                key={tag}
+                label={tag}
+                color="secondary"
+                size="small"
+                sx={{ fontSize: { xs: "1.015625rem", sm: "0.8125rem" } }} // 0.8125rem * 1.25
+              />
             ))}
           </Box>
         )}
         {citations.length > 0 && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: { xs: "1.09375rem", sm: "0.875rem" } }} // 0.875rem * 1.25
+            >
               منابع:
             </Typography>
             <List sx={{ listStyleType: "disc", pl: 4 }}>
@@ -350,6 +387,7 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
                           style={{
                             color: "#1976D9",
                             textDecoration: "underline",
+                            fontSize: "inherit", // Ensure link inherits parent font size
                           }}
                         >
                           {citation}
@@ -358,7 +396,10 @@ const DetailedNewsCard: React.FC<DetailedNewsCardProps> = ({
                         citation
                       )
                     }
-                    primaryTypographyProps={{ variant: "body2" }}
+                    primaryTypographyProps={{
+                      variant: "body2",
+                      sx: { fontSize: { xs: "1.09375rem", sm: "0.875rem" } }, // 0.875rem * 1.25
+                    }}
                   />
                 </ListItem>
               ))}
