@@ -26,6 +26,7 @@ import { Ubuntu } from "next/font/google";
 import cl from "../public/images/cl.png";
 import ec from "../public/images/ec.png";
 import pl from "../public/images/pl.jpg";
+
 // Font setup
 const ubuntu = Ubuntu({
   weight: ["400", "700"],
@@ -50,7 +51,7 @@ const getRandomVibrantColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-// Styled card with responsive width and padding
+// Styled card with full width and minimal padding on mobile
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   borderRadius: "16px",
@@ -58,31 +59,32 @@ const StyledCard = styled(Card)(({ theme }) => ({
   transition: "border-color 0.3s ease",
   width: "100%",
   minHeight: "150px",
-  padding: theme.spacing(2),
+  padding: theme.spacing(1),
+  boxSizing: "border-box",
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(1), // Reduced padding on mobile
+    padding: theme.spacing(0.5),
   },
 }));
 
-// Styled card content
+// Styled card content with full width
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
   width: "100%",
-  padding: theme.spacing(2),
-  "&:last-child": { paddingBottom: theme.spacing(2) },
+  padding: theme.spacing(1),
+  "&:last-child": { paddingBottom: theme.spacing(1) },
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(1), // Reduced padding on mobile
+    padding: theme.spacing(0.5),
   },
 }));
 
 // Responsive StoryCircle with clamped sizing
 const StoryCircle = styled(Box)<{ selected: boolean }>`
-  width: clamp(60px, 12vw, 90px); // Clamped size for mobile
+  width: clamp(60px, 12vw, 90px);
   height: clamp(60px, 12vw, 90px);
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center; // Fixed typo: justifycontent -> justify-content
+  justify-content: center;
   padding: 4px;
   background: #fff;
   background-clip: padding-box;
@@ -111,28 +113,29 @@ const StoryCircle = styled(Box)<{ selected: boolean }>`
   }
 `;
 
-// Responsive NewsTicker
+// Responsive NewsTicker with full width and fixed boxShadow
 const NewsTicker = styled(Box)(({ theme }) => ({
   background: "#e53935",
   color: "#fff",
-  padding: theme.spacing(1, 2),
+  padding: theme.spacing(1),
   overflow: "hidden",
   whiteSpace: "nowrap",
   fontWeight: "bold",
   fontSize: "1rem",
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(2),
   borderRadius: "8px",
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Fixed: Removed invalid "Semgrep"
   width: "100%",
+  boxSizing: "border-box",
   [theme.breakpoints.down("sm")]: {
-    fontSize: "0.9rem", // Slightly smaller font for mobile
-    padding: theme.spacing(0.5, 1),
+    fontSize: "0.9rem",
+    padding: theme.spacing(0.5),
   },
   "& .ticker-content": {
     display: "inline-block",
     animation: "ticker 65s linear infinite",
     [theme.breakpoints.down("sm")]: {
-      animation: "ticker 45s linear infinite", // Faster ticker on mobile
+      animation: "ticker 45s linear infinite",
     },
   },
   "&:hover .ticker-content": {
@@ -148,7 +151,7 @@ const NewsTicker = styled(Box)(({ theme }) => ({
 const ResponsiveTypography = styled(Typography)(({ theme }) => ({
   fontSize: "inherit",
   [theme.breakpoints.down("sm")]: {
-    fontSize: `calc(1rem * 1.2)`, // 1.2x text size on mobile
+    fontSize: `calc(1rem * 1.2)`,
   },
 }));
 
@@ -301,9 +304,16 @@ export default function FootballDashboard() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        px: { xs: 0.5, sm: 1 },
+        width: "100%",
+        boxSizing: "border-box",
+      }}
+    >
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 2, mx: { xs: 0.5, sm: 1 } }}>
           {error}
         </Alert>
       )}
@@ -324,10 +334,10 @@ export default function FootballDashboard() {
       <Box
         display="flex"
         justifyContent="space-around"
-        flexWrap="wrap" // Allow wrapping on smaller screens
-        gap={2}
-        mb={4}
-        px={{ xs: 1, sm: 2 }}
+        flexWrap="wrap"
+        gap={1}
+        mb={3}
+        px={{ xs: 0.5, sm: 1 }}
       >
         {competitions.map((comp) => (
           <StoryCircle
@@ -351,9 +361,9 @@ export default function FootballDashboard() {
       <StyledCard>
         <StyledCardContent>
           {loading ? (
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" justifyContent="center">
               <CircularProgress size={40} />
-              <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
+              <ResponsiveTypography variant="subtitle1" sx={{ mr: 2 }}>
                 در حال بارگذاری
               </ResponsiveTypography>
             </Box>
@@ -373,7 +383,7 @@ export default function FootballDashboard() {
                   sx={{
                     margin: 0,
                     textAlign: "center",
-                    fontSize: "3rem",
+                    fontSize: { xs: "2rem", sm: "3rem" },
                   }}
                 >
                   {competition.name}
@@ -398,15 +408,15 @@ export default function FootballDashboard() {
           <StyledCard>
             <StyledCardContent>
               {loading ? (
-                <Box display="flex" alignItems="center">
+                <Box display="flex" alignItems="center" justifyContent="center">
                   <CircularProgress size={40} />
-                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
+                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 2 }}>
                     در حال بارگذاری جدول رده‌بندی
                   </ResponsiveTypography>
                 </Box>
               ) : (
-                <Box sx={{ overflowX: "auto" }}>
-                  <Table sx={{ minWidth: { xs: 300, sm: 600 } }}>
+                <Box sx={{ overflowX: "auto", width: "100%" }}>
+                  <Table sx={{ minWidth: { xs: 300, sm: 600 }, width: "100%" }}>
                     <TableHead>
                       <TableRow>
                         <TableCell>
@@ -471,15 +481,15 @@ export default function FootballDashboard() {
           <StyledCard>
             <StyledCardContent>
               {loading ? (
-                <Box display="flex" alignItems="center">
+                <Box display="flex" alignItems="center" justifyContent="center">
                   <CircularProgress size={40} />
-                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 8 }}>
+                  <ResponsiveTypography variant="subtitle1" sx={{ mr: 2 }}>
                     در حال بارگذاری مسابقات اخیر
                   </ResponsiveTypography>
                 </Box>
               ) : (
-                <Box sx={{ overflowX: "auto" }}>
-                  <Table sx={{ minWidth: { xs: 300, sm: 600 } }}>
+                <Box sx={{ overflowX: "auto", width: "100%" }}>
+                  <Table sx={{ minWidth: { xs: 300, sm: 600 }, width: "100%" }}>
                     <TableHead>
                       <TableRow>
                         <TableCell>
